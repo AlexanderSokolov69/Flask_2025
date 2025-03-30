@@ -1,5 +1,6 @@
 from flask import Flask, render_template, redirect, make_response, request, abort, jsonify
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
+from flask_restful import reqparse, abort, Api, Resource
 
 from data import db_session
 
@@ -12,8 +13,15 @@ from forms.jobs_f import JobsForm
 from forms.news import NewsForm
 from data import news_api
 from data import jobs_api
+from data import news_resources
 
 app = Flask(__name__)
+api = Api(app)
+# для списка объектов
+api.add_resource(news_resources.NewsListResource, '/api/v2/news')
+
+# для одного объекта
+api.add_resource(news_resources.NewsResource, '/api/v2/news/<int:news_id>')
 login_manager = LoginManager()
 login_manager.init_app(app)
 
@@ -24,7 +32,7 @@ def main():
     db_session.global_init('db/blogs.db')
     app.register_blueprint(news_api.blueprint)
     app.register_blueprint(jobs_api.blueprint)
-    app.run(host='172.16.1.33', port=5050, debug=True)
+    app.run(host='localhost', port=5050, debug=True)
 
 
 @login_manager.user_loader
@@ -182,12 +190,12 @@ def jobs_delete(id):
 
 @app.errorhandler(404)
 def not_found(error):
-    return make_response(jsonify({'error': 'Not found'}), 404)
+    return make_response(jsonify({'error': 'Not found!'}), 404)
 
 
 @app.errorhandler(400)
 def bad_request(_):
-    return make_response(jsonify({'error': 'Bad Request'}), 400)
+    return make_response(jsonify({'error': 'Bad Request!'}), 400)
 
 
 if __name__ == '__main__':
