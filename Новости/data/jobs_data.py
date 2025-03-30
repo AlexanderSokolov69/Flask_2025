@@ -2,11 +2,12 @@ import datetime
 
 import sqlalchemy
 from sqlalchemy import orm
+from sqlalchemy_serializer import SerializerMixin
 
-from Новости.data.db_session import SqlAlchemyBase
+from .db_session import SqlAlchemyBase
 
 
-class Jobs(SqlAlchemyBase):
+class Jobs(SqlAlchemyBase, SerializerMixin):
     __tablename__ = 'jobs'
 
     id = sqlalchemy.Column(sqlalchemy.Integer,
@@ -25,3 +26,4 @@ class Jobs(SqlAlchemyBase):
 
     def __repr__(self):
         return f'<Job> {self.job}'
+
